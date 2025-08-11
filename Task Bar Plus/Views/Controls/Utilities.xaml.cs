@@ -41,6 +41,7 @@ namespace TaskBarPlus.Views.Controls
                 Settings.Default.Save();
             }
         }
+
         private void UtilityPopup_Opened(object sender, EventArgs e)
         {
             int savedRate = Settings.Default.RefreshRate;

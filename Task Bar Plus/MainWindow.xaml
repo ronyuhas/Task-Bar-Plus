@@ -28,7 +28,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <controls:Utilities x:Name="UtilitiesControl" Grid.Row="0" Margin="5,0,5,5" Background="Azure"/>
+        <controls:Utilities x:Name="UtilitiesControl" Grid.Row="0" Margin="2" Background="Azure"/>
         <Border Grid.Row="1" Background="#DD1E1E1E">
             <ListView x:Name="AppListView" ItemsSource="{Binding AppItems}" 
                       BorderThickness="0" 
