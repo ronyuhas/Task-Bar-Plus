@@ -15,6 +15,7 @@
         MinWidth="100"
         Width="200"
         Height="{x:Static SystemParameters.PrimaryScreenHeight}"
+        PreviewMouseWheel="Window_PreviewMouseWheel"
         Left="0"
         Top="0"
         ShowInTaskbar="False">
@@ -33,7 +34,6 @@
                       BorderThickness="0" 
                       Background="Transparent" 
                       SelectedItem="{Binding SelectedAppItem}"
-                      SelectionChanged="AppListView_SelectionChanged"
                       MouseDoubleClick="ListView_MouseDoubleClick"
                       KeyDown="ListView_KeyDown">
                 <ListView.GroupStyle>
@@ -45,7 +45,9 @@
                                         <ControlTemplate TargetType="{x:Type GroupItem}">
                                             <Expander IsExpanded="True" Margin="0,5,0,0" >
                                                 <Expander.Header>
-                                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="16" Foreground="LightGray" Margin="5,0,0,0"/>
+                                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" 
+                                                               FontSize="{Binding DataContext.FontSize, RelativeSource={RelativeSource AncestorType=Window}}" 
+                                                               Foreground="LightGray" Margin="5,0,0,0"/>
                                                 </Expander.Header>
                                                 <ItemsPresenter />
                                             </Expander>
@@ -56,12 +58,22 @@
                         </GroupStyle.ContainerStyle>
                     </GroupStyle>
                 </ListView.GroupStyle>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <EventSetter Event="MouseLeftButtonUp" Handler="AppListViewItem_Click"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
 
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal" Margin="5">
-                            <Image Source="{Binding Icon}" Width="24" Height="24" Margin="10,0,5,0"/>
-                            <TextBlock Text="{Binding Title}" Foreground="White" VerticalAlignment="Center" FontSize="12"/>
+                            <Image Source="{Binding Icon}"
+       Width="{Binding DataContext.IconSize, RelativeSource={RelativeSource AncestorType=Window}}"
+       Height="{Binding DataContext.IconSize, RelativeSource={RelativeSource AncestorType=Window}}"
+       Margin="10,0,5,0"/>
+
+                            <TextBlock Text="{Binding Title}" Foreground="White" VerticalAlignment="Center" 
+                                       FontSize="{Binding DataContext.FontSize, RelativeSource={RelativeSource AncestorType=Window}}"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
