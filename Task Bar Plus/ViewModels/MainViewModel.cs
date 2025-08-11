@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -7,7 +6,6 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
@@ -74,11 +72,21 @@ namespace TaskBarPlus.ViewModels
         private void RefreshApplications()
         {
             var newItems = GetRunningApplications(); // Extracted from LoadRunningApplications
-            var currentIds = AppItems.Select(a => a.ProcessId).ToHashSet();
             var currenthwnds = AppItems.Select(a => a.MainWindowHandle).ToHashSet();
 
+            // Add new apps
             foreach (var item in newItems.Where(n => !currenthwnds.Contains(n.MainWindowHandle)))
                 AppItems.Add(item);
+
+            // Update existing apps if window title has changed
+            foreach (var existingItem in AppItems)
+            {
+                var updatedItem = newItems.FirstOrDefault(n => n.MainWindowHandle == existingItem.MainWindowHandle);
+                if (updatedItem != null && updatedItem.Title != existingItem.Title)
+                {
+                    existingItem.Title = updatedItem.Title;
+                }
+            }
 
             // Remove closed apps
             for (int i = AppItems.Count - 1; i >= 0; i--)
@@ -89,6 +97,7 @@ namespace TaskBarPlus.ViewModels
 
             OnPropertyChanged("ApplicationsByExecutable");
         }
+
 
         private void UpdateGrouping()
         {
