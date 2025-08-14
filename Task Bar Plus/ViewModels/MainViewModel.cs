@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -7,7 +6,6 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
@@ -24,13 +22,46 @@ namespace TaskBarPlus.ViewModels
 
         [DllImport("user32.dll")]
         private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetTopWindow(IntPtr hWnd);
 
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetWindow(IntPtr hWnd, uint uCmd);
+
+        [DllImport("user32.dll")]
+        private static extern bool IsWindowVisible(IntPtr hWnd);
+
+        private const uint GW_HWNDNEXT = 2;
+
+
+        [DllImport("user32.dll")]
+        private static extern bool GetWindowPlacement(IntPtr hWnd, ref WINDOWPLACEMENT lpwndpl);
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct WINDOWPLACEMENT
+        {
+            public int length;
+            public int flags;
+            public int showCmd;
+            public Point ptMinPosition;
+            public Point ptMaxPosition;
+            public Rectangle rcNormalPosition;
+        }
+
+        private const int SW_SHOWMINIMIZED = 2;
+        private const int SW_SHOWNORMAL = 1;
+        private const int SW_SHOWMAXIMIZED = 3;
+
+
+        private const int SW_MINIMIZE = 6;
         private const int SW_RESTORE = 9;
         public ObservableCollection<ApplicationItem> AppItems { get; set; }
         public ICommand BringToFrontCommand { get; }
 
         private DispatcherTimer _refreshTimer;
 
+        public int IconSize => Settings.Default.IconSize;
+        public int FontSize => Settings.Default.FontSize;
 
         public MainViewModel()
         {
@@ -39,6 +70,14 @@ namespace TaskBarPlus.ViewModels
             UpdateGrouping();
             Settings.Default.PropertyChanged += (s, e) =>
             {
+                if (e.PropertyName == nameof(Settings.Default.IconSize))
+                {
+                    OnPropertyChanged(nameof(IconSize));
+                }
+                if (e.PropertyName == nameof(Settings.Default.FontSize))
+                {
+                    OnPropertyChanged(nameof(FontSize));
+                }
                 if (e.PropertyName == nameof(Settings.Default.IsGroupingEnabled))
                 {
                     UpdateGrouping();
@@ -74,11 +113,21 @@ namespace TaskBarPlus.ViewModels
         private void RefreshApplications()
         {
             var newItems = GetRunningApplications(); // Extracted from LoadRunningApplications
-            var currentIds = AppItems.Select(a => a.ProcessId).ToHashSet();
             var currenthwnds = AppItems.Select(a => a.MainWindowHandle).ToHashSet();
 
+            // Add new apps
             foreach (var item in newItems.Where(n => !currenthwnds.Contains(n.MainWindowHandle)))
                 AppItems.Add(item);
+
+            // Update existing apps if window title has changed
+            foreach (var existingItem in AppItems)
+            {
+                var updatedItem = newItems.FirstOrDefault(n => n.MainWindowHandle == existingItem.MainWindowHandle);
+                if (updatedItem != null && updatedItem.Title != existingItem.Title)
+                {
+                    existingItem.Title = updatedItem.Title;
+                }
+            }
 
             // Remove closed apps
             for (int i = AppItems.Count - 1; i >= 0; i--)
@@ -89,6 +138,7 @@ namespace TaskBarPlus.ViewModels
 
             OnPropertyChanged("ApplicationsByExecutable");
         }
+
 
         private void UpdateGrouping()
         {
@@ -160,15 +210,32 @@ namespace TaskBarPlus.ViewModels
             return appList.OrderBy(item => item.ExecutablePath).ToList();
         }
 
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
+
         private void BringAppToFront(object parameter)
         {
             if (parameter is ApplicationItem item && item.MainWindowHandle != IntPtr.Zero)
             {
-                ShowWindow(item.MainWindowHandle, SW_RESTORE);
-                SetForegroundWindow(item.MainWindowHandle);
+                WINDOWPLACEMENT placement = new WINDOWPLACEMENT();
+                placement.length = Marshal.SizeOf(placement);
+
+                if (GetWindowPlacement(item.MainWindowHandle, ref placement))
+                {
+                    if (placement.showCmd == SW_SHOWNORMAL || placement.showCmd == SW_SHOWMAXIMIZED)
+                    {
+                        // App is visible, minimize it
+                        ShowWindow(item.MainWindowHandle, SW_MINIMIZE);
+                    }
+                    else
+                    {
+                        // App is minimized, restore it
+                        ShowWindow(item.MainWindowHandle, SW_RESTORE);
+                        SetForegroundWindow(item.MainWindowHandle);
+                    }
+                }
             }
         }
-
 
         private BitmapImage ConvertIconToImageSource(Icon icon)
         {
@@ -191,9 +258,6 @@ namespace TaskBarPlus.ViewModels
 
         [DllImport("user32.dll")]
         private static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, IntPtr lParam);
-
-        [DllImport("user32.dll")]
-        private static extern bool IsWindowVisible(IntPtr hWnd);
 
         [DllImport("user32.dll", SetLastError = true)]
         private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);

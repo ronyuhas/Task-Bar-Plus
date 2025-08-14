@@ -7,7 +7,7 @@
              xmlns:local="clr-namespace:TaskBarPlus"  
              xmlns:converters="clr-namespace:TaskBarPlus.Views.Converters"
              mc:Ignorable="d"   
-             d:DesignHeight="450" d:DesignWidth="800">  
+             d:DesignHeight="450" d:DesignWidth="800">
     <Control.Resources>
         <converters:BooleanToTextConverter x:Key="BoolToTextConverter"/>
         <Style x:Key="FocusVisual">
@@ -82,22 +82,22 @@
             </Setter>
         </Style>
 
-    </Control.Resources>  
-    <Grid>  
+    </Control.Resources>
+    <Grid>
         <Button Style="{DynamicResource RoundButtonStyle}" Name="UserButton"  
                 Click="UserButton_Click"  
-                Width="40" Height="40">  
+                Width="42" Height="42">
             <!-- Fix for XDG0010: Ensure the resource path is correct and matches the actual location -->
-            <svg:SVGImage UriSource="pack://application:,,,/Task Bar Plus;component/Resources/SVGs/Gear.svg" SizeType="SizeToContent" UseAnimations="True"  
-                          RenderTransformOrigin="0.25,0.25" VerticalContentAlignment="Center"  
-                          HorizontalContentAlignment="Center" Margin="2" />  
+            <svg:SVGImage UriSource="pack://application:,,,/Task Bar Plus;component/Resources/SVGs/Gear.svg" SizeType="ContentToSizeStretch" UseAnimations="True"  
+                          RenderTransformOrigin="0.5,0.5" VerticalContentAlignment="Center"  
+                          HorizontalContentAlignment="Center" Height="33" Width="33" />
         </Button>
         <Popup Name="UtilityPopup" PlacementTarget="{Binding ElementName=UserButton}" Placement="Bottom"  
-               StaysOpen="False" Opacity=".85" AllowsTransparency="True" Opened="UtilityPopup_Opened" >  
-            <Popup.Effect>  
-                <DropShadowEffect />  
-            </Popup.Effect>  
-            <Border Background="Gray" BorderBrush="Black" BorderThickness="1" CornerRadius="5">  
+               StaysOpen="False" Opacity=".85" AllowsTransparency="True" Opened="UtilityPopup_Opened" >
+            <Popup.Effect>
+                <DropShadowEffect />
+            </Popup.Effect>
+            <Border Background="Gray" BorderBrush="Black" BorderThickness="1" CornerRadius="5">
                 <StackPanel Background="LightGray" Margin="10">
                     <svg:SVGImage UriSource="{Binding ImageSource}" SizeType="SizeToContent" Width="40" Height="40"  
                                   UseAnimations="True"  
@@ -119,12 +119,12 @@
                           Width="60" Height="30" IsChecked="{Binding Source={x:Static local:Settings.Default}, Path=RequireDoubleClick, Mode=TwoWay}" Style="{StaticResource ToggleSwitchStyle}"/>
                     </StackPanel>
                     <CheckBox Content="Group by Executable Name" IsChecked="{Binding Source={x:Static local:Settings.Default}, Path=IsGroupingEnabled, Mode=TwoWay}" Margin="20,10,10,10"/>
-                    <TextBlock Text="{Binding UserPrivileges}" FontWeight="Bold" HorizontalAlignment="Center" />  
+                    <TextBlock Text="{Binding UserPrivileges}" FontWeight="Bold" HorizontalAlignment="Center" />
                     <Button Content="Exit" Style="{DynamicResource RoundButtonStyle}" Height="40" Width="180"  
                             Background="LightBlue" Foreground="Black" FontWeight="Bold" Margin="10"
-                            Click="Exit_Click"/>  
-                </StackPanel>  
-            </Border>  
-        </Popup>  
-    </Grid>  
+                            Click="Exit_Click"/>
+                </StackPanel>
+            </Border>
+        </Popup>
+    </Grid>
 </UserControl>
