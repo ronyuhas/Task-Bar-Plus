@@ -6,9 +6,19 @@
              xmlns:svg="https://github.com/dotnetprojects/SVGImage"  
              xmlns:local="clr-namespace:TaskBarPlus"  
              xmlns:converters="clr-namespace:TaskBarPlus.Views.Converters"
+             Loaded="Window_Loaded"
              mc:Ignorable="d"   
              d:DesignHeight="450" d:DesignWidth="800">
     <Control.Resources>
+        <Storyboard x:Key="RotateGearStoryboard" RepeatBehavior="Forever">
+            <DoubleAnimation
+            Storyboard.TargetName="GearRotateTransform"
+            Storyboard.TargetProperty="Angle"
+            From="0" To="360"
+            Duration="0:0:20"
+            RepeatBehavior="Forever"/>
+        </Storyboard>
+
         <converters:BooleanToTextConverter x:Key="BoolToTextConverter"/>
         <Style x:Key="FocusVisual">
             <Setter Property="Control.Template">
@@ -88,9 +98,21 @@
                 Click="UserButton_Click"  
                 Width="42" Height="42">
             <!-- Fix for XDG0010: Ensure the resource path is correct and matches the actual location -->
-            <svg:SVGImage UriSource="pack://application:,,,/Task Bar Plus;component/Resources/SVGs/Gear.svg" SizeType="ContentToSizeStretch" UseAnimations="True"  
-                          RenderTransformOrigin="0.5,0.5" VerticalContentAlignment="Center"  
-                          HorizontalContentAlignment="Center" Height="33" Width="33" />
+            <Grid>
+                <svg:SVGImage x:Name="GearIcon"
+                  UriSource="pack://application:,,,/Task Bar Plus;component/Resources/SVGs/ColorGear.svg"
+                  SizeType="ContentToSizeStretch"
+                  UseAnimations="True"
+                  RenderTransformOrigin="0.5,0.5"
+                  VerticalContentAlignment="Center"
+                  HorizontalContentAlignment="Center"
+                  Height="33" Width="33">
+                    <svg:SVGImage.RenderTransform>
+                        <RotateTransform x:Name="GearRotateTransform" Angle="0"/>
+                    </svg:SVGImage.RenderTransform>
+                </svg:SVGImage>
+            </Grid>
+
         </Button>
         <Popup Name="UtilityPopup" PlacementTarget="{Binding ElementName=UserButton}" Placement="Bottom"  
                StaysOpen="False" Opacity=".85" AllowsTransparency="True" Opened="UtilityPopup_Opened" >
