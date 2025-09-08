@@ -93,7 +93,7 @@
                           HorizontalContentAlignment="Center" Height="33" Width="33" />
         </Button>
         <Popup Name="UtilityPopup" PlacementTarget="{Binding ElementName=UserButton}" Placement="Bottom"  
-               StaysOpen="False" Opacity=".85" AllowsTransparency="True" Opened="UtilityPopup_Opened" >
+               StaysOpen="False" Opacity=".85" AllowsTransparency="True">
             <Popup.Effect>
                 <DropShadowEffect />
             </Popup.Effect>
@@ -106,7 +106,9 @@
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,0,0,0">
                         <Label Content="Refresh Rate:" Margin="10" VerticalAlignment="Center"/>
                         <ComboBox x:Name="RefreshRateComboBox" Width="100" Margin="10"
-                            SelectedIndex="1" SelectionChanged="RefreshRateComboBox_SelectionChanged">
+                                  SelectedIndex="{Binding Source={x:Static local:Settings.Default}, Path=RefreshRate, Mode=TwoWay}" 
+                                  SelectedValuePath="Tag"
+                                  SelectionChanged="RefreshRateComboBox_SelectionChanged">
                             <ComboBoxItem Content="1 second" Tag="1"/>
                             <ComboBoxItem Content="5 seconds" Tag="5"/>
                             <ComboBoxItem Content="10 seconds" Tag="10"/>
