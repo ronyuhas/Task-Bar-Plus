@@ -78,7 +78,6 @@ namespace TaskBarPlus
             }
         }
 
-
         private void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (Settings.Default.RequireDoubleClick)
@@ -89,7 +88,6 @@ namespace TaskBarPlus
                         vm.BringToFrontCommand.Execute(item);
                 }
             }
-
         }
 
         private void ListView_KeyDown(object sender, KeyEventArgs e)

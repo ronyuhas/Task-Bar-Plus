@@ -62,6 +62,7 @@ namespace TaskBarPlus.ViewModels
 
         public int IconSize => Settings.Default.IconSize;
         public int FontSize => Settings.Default.FontSize;
+        public int RefreshRate => Settings.Default.RefreshRate;
 
         public MainViewModel()
         {
@@ -82,6 +83,11 @@ namespace TaskBarPlus.ViewModels
                 {
                     UpdateGrouping();
                     Settings.Default.Save();
+                }
+                if (e.PropertyName == nameof(Settings.Default.RefreshRate))
+                {
+                    UpdateRefreshRate(Settings.Default.RefreshRate);
+                    OnPropertyChanged(nameof(RefreshRate));
                 }
             };
 
@@ -104,10 +110,6 @@ namespace TaskBarPlus.ViewModels
                 _refreshTimer.Interval = TimeSpan.FromSeconds(newRateInSeconds);
                 _refreshTimer.Start();
             }
-
-            // Optionally persist the new setting
-            Settings.Default.RefreshRate = newRateInSeconds;
-            Settings.Default.Save();
         }
 
         private void RefreshApplications()

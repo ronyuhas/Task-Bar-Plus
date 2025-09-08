@@ -33,13 +33,7 @@ namespace TaskBarPlus.Views.Controls
 
         private void RefreshRateComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //if (RefreshRateComboBox.SelectedItem is ComboBoxItem selectedItem &&
-            //int.TryParse(selectedItem.Tag.ToString(), out int seconds))
-            //{
-            //    // Use 'seconds' as the new refresh rate
-            //    Settings.Default.RefreshRate = seconds;
-                Settings.Default.Save();
-            //}
+            Settings.Default.Save();
         }
 
         private void Exit_Click(object sender, RoutedEventArgs e)
