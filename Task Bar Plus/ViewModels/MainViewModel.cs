@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using TaskBarPlus.Models;
 using TaskBarPlus.ViewModels.BaseClasses;
+using TaskBarPlus.ViewModels.WindowsUtilities;
 
 namespace TaskBarPlus.ViewModels
 {
@@ -64,8 +65,10 @@ namespace TaskBarPlus.ViewModels
         public int FontSize => Settings.Default.FontSize;
         public int RefreshRate => Settings.Default.RefreshRate;
 
-        public MainViewModel()
+        private readonly ForegroundWindowTracker _tracker;
+        public MainViewModel(ForegroundWindowTracker tracker)
         {
+            _tracker = tracker;
             AppItems = new ObservableCollection<ApplicationItem>();
             BringToFrontCommand = new RelayCommand(BringAppToFront);
             UpdateGrouping();
@@ -219,7 +222,8 @@ namespace TaskBarPlus.ViewModels
         {
             if (parameter is ApplicationItem item && item.MainWindowHandle != IntPtr.Zero)
             {
-                IntPtr foreground = GetForegroundWindow();
+                IntPtr? foregroundNullable = _tracker?.LastForegroundWindow;
+                IntPtr foreground = foregroundNullable ?? IntPtr.Zero;
                 if (foreground == item.MainWindowHandle)
                 {
                     // If app is already focused, minimize it
@@ -232,14 +236,8 @@ namespace TaskBarPlus.ViewModels
                     placement.length = Marshal.SizeOf(placement);
                     if (GetWindowPlacement(item.MainWindowHandle, ref placement))
                     {
-                        if (placement.showCmd == SW_SHOWMINIMIZED)
-                        {
-                            ShowWindow(item.MainWindowHandle, SW_RESTORE);
-                        }
-                        else
-                        {
-                            ShowWindow(item.MainWindowHandle, SW_SHOWMAXIMIZED);
-                        }
+                        ShowWindow(item.MainWindowHandle, SW_RESTORE);
+
                         SetForegroundWindow(item.MainWindowHandle);
                     }
                 }
