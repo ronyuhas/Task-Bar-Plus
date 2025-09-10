@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using TaskBarPlus.Models;
 using TaskBarPlus.ViewModels.BaseClasses;
+using TaskBarPlus.ViewModels.WindowsUtilities;
 
 namespace TaskBarPlus.ViewModels
 {
@@ -64,8 +65,10 @@ namespace TaskBarPlus.ViewModels
         public int FontSize => Settings.Default.FontSize;
         public int RefreshRate => Settings.Default.RefreshRate;
 
-        public MainViewModel()
+        private readonly ForegroundWindowTracker _tracker;
+        public MainViewModel(ForegroundWindowTracker tracker)
         {
+            _tracker = tracker;
             AppItems = new ObservableCollection<ApplicationItem>();
             BringToFrontCommand = new RelayCommand(BringAppToFront);
             UpdateGrouping();
@@ -219,20 +222,22 @@ namespace TaskBarPlus.ViewModels
         {
             if (parameter is ApplicationItem item && item.MainWindowHandle != IntPtr.Zero)
             {
-                WINDOWPLACEMENT placement = new WINDOWPLACEMENT();
-                placement.length = Marshal.SizeOf(placement);
-
-                if (GetWindowPlacement(item.MainWindowHandle, ref placement))
+                IntPtr? foregroundNullable = _tracker?.LastForegroundWindow;
+                IntPtr foreground = foregroundNullable ?? IntPtr.Zero;
+                if (foreground == item.MainWindowHandle)
                 {
-                    if (placement.showCmd == SW_SHOWNORMAL || placement.showCmd == SW_SHOWMAXIMIZED)
+                    // If app is already focused, minimize it
+                    ShowWindow(item.MainWindowHandle, SW_MINIMIZE);
+                }
+                else
+                {
+                    // Always maximize/restore and bring to front
+                    WINDOWPLACEMENT placement = new WINDOWPLACEMENT();
+                    placement.length = Marshal.SizeOf(placement);
+                    if (GetWindowPlacement(item.MainWindowHandle, ref placement))
                     {
-                        // App is visible, minimize it
-                        ShowWindow(item.MainWindowHandle, SW_MINIMIZE);
-                    }
-                    else
-                    {
-                        // App is minimized, restore it
                         ShowWindow(item.MainWindowHandle, SW_RESTORE);
+
                         SetForegroundWindow(item.MainWindowHandle);
                     }
                 }

@@ -6,6 +6,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using TaskBarPlus.Models;
 using TaskBarPlus.ViewModels;
+using TaskBarPlus.ViewModels.WindowsUtilities;
 
 namespace TaskBarPlus
 {
@@ -14,12 +15,22 @@ namespace TaskBarPlus
     /// </summary>
     public partial class MainWindow : Window
     {
+        private ForegroundWindowTracker _tracker;
+
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainViewModel();
+            this.Loaded += MainWindow_Loaded;
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.Closed += (s, e) => _tracker.Dispose();
+            _tracker = new ForegroundWindowTracker();
+            DataContext = new MainViewModel(_tracker);
             //AppListView.Items.GroupDescriptions.Add(new PropertyGroupDescription("ExecutablePath"));
         }
+
         private bool isResizing = false;
         private Point lastMousePosition;
 
