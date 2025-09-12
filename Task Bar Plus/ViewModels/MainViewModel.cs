@@ -32,9 +32,6 @@ namespace TaskBarPlus.ViewModels
         [DllImport("user32.dll")]
         private static extern bool IsWindowVisible(IntPtr hWnd);
 
-        private const uint GW_HWNDNEXT = 2;
-
-
         [DllImport("user32.dll")]
         private static extern bool GetWindowPlacement(IntPtr hWnd, ref WINDOWPLACEMENT lpwndpl);
 
@@ -56,6 +53,14 @@ namespace TaskBarPlus.ViewModels
 
         private const int SW_MINIMIZE = 6;
         private const int SW_RESTORE = 9;
+
+
+        HashSet<string> excludedProcesses = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "TextInputHost", // Windows Input Experience
+                "SystemSettings", // Windows Settings app
+            };
+
         public ObservableCollection<ApplicationItem> AppItems { get; set; }
         public ICommand BringToFrontCommand { get; }
 
@@ -102,7 +107,7 @@ namespace TaskBarPlus.ViewModels
             };
             _refreshTimer.Tick += (s, e) => RefreshApplications();
             _refreshTimer.Start();
-            
+
         }
 
         public void UpdateRefreshRate(int newRateInSeconds)
@@ -117,7 +122,10 @@ namespace TaskBarPlus.ViewModels
 
         private void RefreshApplications()
         {
-            var newItems = GetRunningApplications(); // Extracted from LoadRunningApplications
+            var newItems = GetRunningApplications()
+                .Where(app =>
+                    !excludedProcesses.Contains(app.ProcessName));
+
             var currenthwnds = AppItems.Select(a => a.MainWindowHandle).ToHashSet();
 
             // Add new apps
@@ -199,7 +207,8 @@ namespace TaskBarPlus.ViewModels
                                 Icon = image,
                                 ProcessId = (int)processId,
                                 MainWindowHandle = hWnd,
-                                ExecutablePath = exePath
+                                ExecutablePath = exePath,
+                                ProcessName = proc.ProcessName
                             });
                         }
                     }

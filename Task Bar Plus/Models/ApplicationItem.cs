@@ -24,6 +24,6 @@ namespace TaskBarPlus.Models
         public required int ProcessId { get; set; }
         public required IntPtr MainWindowHandle { get; set; }
         public required string ExecutablePath { get; set; }
-
+        public required string ProcessName { get; set; }
     }
 }
