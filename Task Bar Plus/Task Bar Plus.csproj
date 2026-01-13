@@ -13,6 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\SVGs\ColorGear.svg" />
     <None Remove="Resources\SVGs\Gear.svg" />
   </ItemGroup>
 
@@ -22,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\SVGs\ColorGear.svg" />
     <Resource Include="Resources\SVGs\Gear.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
