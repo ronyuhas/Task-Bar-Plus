@@ -84,10 +84,15 @@
             "ComponentsUrl" = "8:"
                 "Items"
                 {
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.NetCore.DesktopRuntime.8.0.Arm64"
                     {
-                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
-                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    "Name" = "8:.NET Desktop Runtime 8.0.11 (Arm64)"
+                    "ProductCode" = "8:Microsoft.NetCore.DesktopRuntime.8.0.Arm64"
+                    }
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.NetCore.DesktopRuntime.8.0.x64"
+                    {
+                    "Name" = "8:.NET Desktop Runtime 8.0.11 (x64)"
+                    "ProductCode" = "8:Microsoft.NetCore.DesktopRuntime.8.0.x64"
                     }
                 }
             }
@@ -199,13 +204,13 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Task Bar Plus"
         "ProductCode" = "8:{3461413A-10AE-418E-BF5C-0E9917148146}"
-        "PackageCode" = "8:{D6348924-FA31-4A99-A5EC-2DE5CC4138B4}"
+        "PackageCode" = "8:{859E118F-116B-4631-A3E1-DAB74073BF11}"
         "UpgradeCode" = "8:{FB1F1609-D815-4EE3-BCDA-7BC40A2F989D}"
         "AspNetVersion" = "8:"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
-        "InstallAllUsers" = "11:FALSE"
+        "InstallAllUsers" = "11:TRUE"
         "ProductVersion" = "8:1.0.4"
         "Manufacturer" = "8:RWYuhas"
         "ARPHELPTELEPHONE" = "8:"
@@ -734,7 +739,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_D25126144C5448CC8363970D29A1EAE7"
             {
-            "SourcePath" = "8:..\\Task Bar Plus\\obj\\Release\\net8.0-windows\\apphost.exe"
+            "SourcePath" = "8:..\\Task Bar Plus\\obj\\Release\\net8.0-windows8.0\\apphost.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6659B074F5B3463390EE38CD78A45A2B"
